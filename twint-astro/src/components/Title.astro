@@ -1,0 +1,23 @@
+---
+const TITLES = [
+  '100 Best Tweets from [Username]',
+  'The Top 100 [Username] Tweets You Need to See',
+  'The Greatest Hits: 100 Must-Read Tweets from [Username]',
+  'Get Inspired with the Top 100 [Username] Tweets',
+  'Twitter Gold: The Top 100 [Username] Tweets',
+  // ... additional titles here
+];
+
+const { index, username, count } = Astro.props;
+
+const title = TITLES[index % TITLES.length];
+
+let formattedTitle = title.replace('[Username]', username);
+formattedTitle = formattedTitle.replace('100', count);
+---
+
+<h4
+  class="text-2xl md:text-2xl lg:text-3xl 2xl:text-4xl mb-4 text-black font-bold text-center"
+>
+  {formattedTitle}
+</h4>

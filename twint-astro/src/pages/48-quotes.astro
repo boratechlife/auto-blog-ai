@@ -1,0 +1,157 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Card from '../components/Card.astro';
+import amerix from '../../json/amerix-edited.json';
+import Title from '../components/Title.astro';
+const username = 'amerix';
+---
+
+<Layout title="Welcome to Astro.">
+  <main>
+    <section class="w-3/4 mx-auto">
+      <h1 class="text-4xl lg:text-5xl mb-4">
+        <Title username={username} index={0} count={amerix.length} />
+      </h1>
+      <!-- component -->
+      <div class="flex items-center w-full justify-center px-6 py-10">
+        <div class="flex flex-col brder gap-4 rounded-lg flex-none w-full">
+          <div class="flex flex-col gap-10">
+            {
+              amerix.map((item) => {
+                return (
+                  <div class="bg-white shadow-md rounded-lg p-6 mb-4 flex flex-col md:flex-row">
+                    <blockquote
+                      id="block-quote"
+                      class="text-gray-700 text-xl font-light leading-normal flex-grow"
+                    >
+                      {item}
+                    </blockquote>
+                    <div class="flex-shrink-0 mt-4 md:mt-0 md:ml-4">
+                      <cite class="text-gray-600 font-light block">
+                        {username}
+                      </cite>
+
+                      <a
+                        href={`https://twitter.com/${username}`}
+                        class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full mt-4 block"
+                      >
+                        Follow {username} on Twitter
+                      </a>
+                    </div>
+                  </div>
+                );
+              })
+            }
+
+            <!-- Item -->
+          </div>
+          <div class="p-4">
+            <button
+              class="w-full border p-2 rounded-md hover:opacity-60 transition"
+              >View all</button
+            >
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <script is:inline>
+      // Get the download button
+      const downloadButton = document.querySelector('#download-button');
+
+      // Add a click event listener to the button
+      downloadButton.addEventListener('click', downloadQuote);
+
+      function downloadQuote() {
+        // <button
+        //                 id="download-button"
+        //                 class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-full mt-4 block"
+        //               >
+        //                 Download Quote
+        //               </button>
+        // Get the quote text
+        const quote = document.querySelector('blockquote').innerText;
+
+        // Get the name of the person
+        const name = document.querySelector('cite').innerText;
+
+        // Create a canvas element
+        const canvas = document.createElement('canvas');
+
+        // Set the canvas width and height
+        canvas.width = 500;
+        canvas.height = 300;
+
+        // Get the canvas context
+        const ctx = canvas.getContext('2d');
+
+        // Set the canvas background color to white
+        ctx.fillStyle = '#fff';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        // Set the font and text baseline
+        ctx.font = '30px sans-serif';
+        ctx.textBaseline = 'top';
+
+        // ctx.textAlign = 'center';
+
+        // Set the text color to black
+        ctx.fillStyle = '#000';
+        // Concatenate the quote and the name
+        const text = `${quote} - ${name}`;
+        // Wrap the text using the canvas context
+        const lines = wrapText(ctx, text, canvas.width - 40);
+
+        // Draw the text on the canvas
+        drawText(ctx, lines, 20, 20);
+
+        // Convert the canvas to a PNG image
+        const img = canvas.toDataURL('image/png');
+
+        // Create a link element
+        const link = document.createElement('a');
+
+        // Set the link href to the image data
+        link.href = img;
+
+        // Set the download attribute of the link
+        link.download = 'quote.png';
+
+        // Append the link to the document body
+        document.body.appendChild(link);
+
+        // Click the link to download the image
+        link.click();
+
+        // Remove the link from the document body
+        document.body.removeChild(link);
+
+        function wrapText(context, text, maxWidth) {
+          const words = text.split(' ');
+          const lines = [];
+          let line = '';
+
+          for (let i = 0; i < words.length; i++) {
+            const word = words[i];
+            const width = context.measureText(line + word).width;
+            if (width > maxWidth) {
+              lines.push(line);
+              line = '';
+            }
+            line += word + ' ';
+          }
+
+          lines.push(line);
+          return lines;
+        }
+
+        function drawText(context, lines, x, y) {
+          for (let i = 0; i < lines.length; i++) {
+            context.fillText(lines[i], x, y);
+            y += 24;
+          }
+        }
+      }
+    </script>
+  </main>
+</Layout>
