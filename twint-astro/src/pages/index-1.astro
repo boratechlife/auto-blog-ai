@@ -1,0 +1,69 @@
+---
+
+import fs from 'fs';
+const path = 'C:/Users/admin/twint-progressive/twint-astro/ready';
+const output = [];
+
+const slugify = (str) => str.toLowerCase()
+                            .replace(/[^a-z0-9]+/g, '-')
+                            .replace(/(^-|-$)+/g, '');
+
+const titles = [
+  "Today's Top 40 Motivational Quotes",
+  "40 Motivating Quotes to Inspire Your Day",
+  "Daily Dose of Motivation: Top 40 Quotes",
+  "Get Inspired: Today's Top 40 Motivation Quotes",
+  "Motivation in 40 Quotes: Today's Best",
+  "40 Quotes to Jumpstart Your Motivation",
+  "Today's Motivational Must-Read: Top 40 Quotes",
+  "Inspiration in 40 Quotes: Today's Picks",
+  "40 Motivating Quotes You Need to Read Today",
+  "Today's Top 40 Quotes to Keep You Motivated",
+  "Fuel Your Motivation with These Top 40 Quotes",
+  "40 Quotes to Elevate Your Motivation Today",
+  "Get Motivated: Today's Top 40 Quotes",
+  "Top 40 Motivational Quotes for Today's Inspiration",
+  "Today's Most Inspiring: Top 40 Motivation Quotes",
+  "40 Quotes to Keep You Motivated Today and Always",
+  "Today's Top 40 Quotes to Fuel Your Motivation",
+  "Motivation in 40 Quotes: Today's Top Picks",
+  "40 Quotes to Inspire Your Best Today",
+  "Today's Essential Motivation: Top 40 Quotes"
+];
+
+/// Get the list of files in the directory
+fs.readdir(path, async (err, files) => {
+  if (err) {
+    console.error(err);
+    return;
+  }
+
+  for (const file of files) {
+    const filepath = `${path}/${file}`;
+    try {
+      const data = await fs.promises.readFile(filepath, 'utf-8');
+      const lines = data.split('\n').filter(line => line.trim() !== ''); // Ignore empty lines
+      const lineCount = lines.length;
+      const randomIndex = Math.floor(Math.random() * titles.length);
+      const title = titles[randomIndex].replace('40', lineCount);
+      const slug = slugify(title);
+
+      // Add the username, title, slug, and data to the output array
+      output.push({
+        username: file.replace('.txt', ''),
+        title: title,
+        slug: slug,
+        data: lines,
+      });
+
+      // Write the output array to a JSON file
+      await fs.promises.writeFile('output.json', JSON.stringify(output));
+      console.log(`Title for ${file}: ${title}`);
+    } catch (err) {
+      console.error(err);
+    }
+  }
+});
+
+
+---
